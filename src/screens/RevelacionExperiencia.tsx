@@ -1,5 +1,5 @@
-import React from 'react';
-import { Alert, ImageBackground, ScrollView, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { ImageBackground, Modal, ScrollView, Text, View } from 'react-native';
 import AppShell from '../components/AppShell';
 import Card from '../components/Card';
 import PrimaryButton from '../components/PrimaryButton';
@@ -8,15 +8,17 @@ import { Screen } from '../types';
 import { styles } from '../theme/styles';
 
 export default function RevelacionExperiencia({ onNavigate, experience }: SelectedExperienceScreenProps) {
+  const [supportModalOpen, setSupportModalOpen] = useState(false);
   const destinationTitle = experience?.destinationTitle ?? 'Cena Regional & Coctelería de Autor';
   const destinationImage =
     experience?.destinationImage ??
     'https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=800';
   const destinationLocation = experience?.destinationLocation ?? 'Güemes, Córdoba';
+  const exactAddress = experience?.exactAddress ?? 'Belgrano 867, Güemes, Córdoba';
   const activityType = experience?.activityType ?? 'Plan Premium';
 
   return (
-    <AppShell title="Tu Plan Secreto" onBack={() => onNavigate(Screen.AVENTURA_DISCOVERY, 'push_back')} rightText="⋮">
+    <AppShell title="Tu Plan Secreto" onBack={() => onNavigate(Screen.AVENTURA_DISCOVERY, 'push_back')}>
       <ScrollView contentContainerStyle={styles.contentWithFooter}>
         <Text style={styles.kickerCenter}>¡Sorpresa!</Text>
         <Text style={styles.titleCenter}>¡Tu destino ha sido revelado!</Text>
@@ -44,13 +46,35 @@ export default function RevelacionExperiencia({ onNavigate, experience }: Select
         </View>
 
         <Card>
+          <Text style={styles.cardTitle}>Ubicación</Text>
+          <Text style={styles.cardText}>{exactAddress}</Text>
+        </Card>
+
+        <Card>
           <Text style={styles.titleSmall}>¿No es lo que buscabas?</Text>
           <Text style={styles.cardText}>Tenemos una segunda alternativa gratuita solo para ti.</Text>
-          <PrimaryButton variant="muted" onPress={() => Alert.alert('Alternativa', 'Paseo cultural por Nueva Córdoba.')}>
+          <PrimaryButton
+            variant="muted"
+            onPress={() => setSupportModalOpen(true)}
+          >
             Ver alternativa sorpresa
           </PrimaryButton>
         </Card>
       </ScrollView>
+
+      <Modal transparent visible={supportModalOpen} animationType="fade" onRequestClose={() => setSupportModalOpen(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.cardTitle}>Soporte PlanGo</Text>
+            <Text style={styles.cardText}>
+              Para pedir una alternativa sorpresa comunicate al +54 9 351 555-0148.
+            </Text>
+            <PrimaryButton variant="secondary" onPress={() => setSupportModalOpen(false)}>
+              Entendido
+            </PrimaryButton>
+          </View>
+        </View>
+      </Modal>
 
       <View style={styles.footerBar}>
         <PrimaryButton onPress={() => onNavigate(Screen.ENCUESTA, 'push')}>¡Me encanta, vamos!</PrimaryButton>

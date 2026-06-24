@@ -21,14 +21,20 @@ export interface NavigationOptions {
 }
 
 export interface CartState {
-  ticketCount: number;
+  items: CartItem[];
   promoCode: string;
   appliedPromoCode: string;
   paymentMethod: 'efectivo' | 'tarjeta';
   cardNumber: string;
   cardExpiration: string;
   cardSecurityCode: string;
-  ticketPrice?: number;
+}
+
+export interface CartItem {
+  id: string;
+  purchase: NavigationOptions;
+  quantity: number;
+  unitPrice: number;
 }
 
 export type Navigate = (screen: Screen, transition?: TransitionType, options?: NavigationOptions) => void;
@@ -40,8 +46,9 @@ export interface ScreenProps {
 }
 
 export interface ConfirmationInfo {
-  itemType?: 'experience' | 'gift';
+  itemType?: 'experience' | 'gift' | 'mixed';
   giftRecipientName?: string;
+  itemCount?: number;
 }
 
 export interface ConfirmationScreenProps extends ScreenProps {
@@ -52,6 +59,11 @@ export interface UserProfile {
   name: string;
   age: string;
   preferences: UserPreferences;
+}
+
+export interface AuthScreenProps extends ScreenProps {
+  onLogin: (email: string, password: string) => string | undefined;
+  onRegister: (name: string, age: string, email: string, password: string) => string | undefined;
 }
 
 export interface ProfileAwareScreenProps extends ScreenProps {
@@ -73,9 +85,10 @@ export interface GiftConfigScreenProps extends ScreenProps {
 }
 
 export interface PaymentScreenProps extends ScreenProps {
-  purchase?: NavigationOptions;
   cart: CartState;
   onCartChange: (cart: CartState) => void;
+  onRemoveCartItems: (itemIds: string[]) => void;
+  onCompletePurchase: (items: CartItem[]) => void;
 }
 
 export interface ExperiencesScreenProps extends ScreenProps {

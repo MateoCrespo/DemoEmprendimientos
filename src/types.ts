@@ -62,6 +62,7 @@ export interface UserExperience {
   destinationTitle: string;
   destinationImage: string;
   destinationLocation: string;
+  exactAddress: string;
   hints: string[];
   preparation: string[];
 }

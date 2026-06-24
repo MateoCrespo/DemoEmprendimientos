@@ -21,7 +21,7 @@ export default function EncuestaCalidad({ onNavigate, experience, onFinishFeedba
   };
 
   return (
-    <AppShell title="Tu Plan Secreto" onBack={() => onNavigate(Screen.INICIO, 'push_back')} rightText="⋮">
+    <AppShell title="Tu Plan Secreto" onBack={() => onNavigate(Screen.INICIO, 'push_back')}>
       <ScrollView contentContainerStyle={styles.contentWithNav}>
         <ImageBackground
           source={{

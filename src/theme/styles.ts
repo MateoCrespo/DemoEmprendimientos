@@ -161,7 +161,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
   errorText: {
-    color: colors.secondary,
+    color: '#c62828',
     fontSize: 13,
     fontWeight: '800',
     lineHeight: 18,
@@ -184,7 +184,7 @@ export const styles = StyleSheet.create({
     fontSize: 15,
   },
   inputInline: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.card,
     borderColor: colors.border,
     borderWidth: 1,
     borderRadius: 10,
@@ -223,6 +223,9 @@ export const styles = StyleSheet.create({
   },
   buttonSecondary: {
     backgroundColor: colors.secondary,
+  },
+  buttonDanger: {
+    backgroundColor: '#c62828',
   },
   buttonMuted: {
     backgroundColor: colors.cardMuted,
@@ -560,9 +563,15 @@ export const styles = StyleSheet.create({
   calendarDaySelected: {
     backgroundColor: colors.secondary,
   },
+  calendarDayDisabled: {
+    opacity: 0.35,
+  },
   calendarDayText: {
     color: colors.primary,
     fontWeight: '800',
+  },
+  calendarDayTextDisabled: {
+    color: colors.muted,
   },
   calendarDayTextSelected: {
     color: colors.surface,
@@ -617,6 +626,21 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     color: colors.primary,
     fontSize: 18,
+    fontWeight: '900',
+  },
+  removeSelector: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: colors.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.card,
+  },
+  removeSelectorText: {
+    color: colors.secondary,
+    fontSize: 16,
     fontWeight: '900',
   },
   paymentMethodRow: {
@@ -845,5 +869,22 @@ export const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 14,
     marginTop: 12,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 26, 43, 0.48)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  modalCard: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    padding: 18,
+    gap: 14,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
 });

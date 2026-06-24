@@ -7,6 +7,7 @@ import SectionTitle from '../components/SectionTitle';
 import { SelectedExperienceScreenProps } from '../navigation';
 import { styles } from '../theme/styles';
 import { Screen } from '../types';
+import { parseDateInput, parseTimeInput } from '../utils/dateTimeValidation';
 
 function TimerBox({ value, label, accent }: { value: string; label: string; accent?: boolean }) {
   return (
@@ -17,15 +18,39 @@ function TimerBox({ value, label, accent }: { value: string; label: string; acce
   );
 }
 
+function getRevealTarget(experienceDate?: string, experienceTimeRange?: string) {
+  const date = experienceDate ? parseDateInput(experienceDate) : undefined;
+  const startTime = experienceTimeRange?.split(' a ')[0];
+  const parsedStartTime = startTime ? parseTimeInput(startTime) : undefined;
+
+  if (!date || parsedStartTime === undefined) {
+    return Date.now() + 24 * 60 * 60 * 1000;
+  }
+
+  const activityStart = new Date(date);
+  const startHour = Math.floor(parsedStartTime / 60);
+  const startMinutes = parsedStartTime % 60;
+  activityStart.setHours(startHour, startMinutes, 0, 0);
+
+  return activityStart.getTime() - 24 * 60 * 60 * 1000;
+}
+
+function getSecondsUntil(timestamp: number) {
+  return Math.max(0, Math.floor((timestamp - Date.now()) / 1000));
+}
+
 export default function TuProximaAventura({ onNavigate, experience }: SelectedExperienceScreenProps) {
-  const [secondsLeft, setSecondsLeft] = useState(24 * 60 * 60);
+  const revealTarget = getRevealTarget(experience?.date, experience?.timeRange);
+  const [secondsLeft, setSecondsLeft] = useState(() => getSecondsUntil(revealTarget));
 
   useEffect(() => {
-    const interval = setInterval(() => setSecondsLeft((value) => (value > 0 ? value - 1 : 0)), 1000);
+    setSecondsLeft(getSecondsUntil(revealTarget));
+    const interval = setInterval(() => setSecondsLeft(getSecondsUntil(revealTarget)), 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [revealTarget]);
 
-  const hours = Math.floor(secondsLeft / 3600);
+  const days = Math.floor(secondsLeft / 86400);
+  const hours = Math.floor((secondsLeft % 86400) / 3600);
   const minutes = Math.floor((secondsLeft % 3600) / 60);
   const seconds = secondsLeft % 60;
 
@@ -61,6 +86,7 @@ export default function TuProximaAventura({ onNavigate, experience }: SelectedEx
         </ImageBackground>
 
         <View style={styles.timerRow}>
+          <TimerBox value={days.toString().padStart(2, '0')} label="Días" />
           <TimerBox value={hours.toString().padStart(2, '0')} label="Horas" />
           <TimerBox value={minutes.toString().padStart(2, '0')} label="Minutos" />
           <TimerBox value={seconds.toString().padStart(2, '0')} label="Segundos" accent />

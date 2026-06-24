@@ -12,7 +12,18 @@ export default function ConfirmacionReserva({ onNavigate, confirmation }: Confir
   const progress = useRef(new Animated.Value(0)).current;
   const celebration = useRef(new Animated.Value(0)).current;
   const isGift = confirmation?.itemType === 'gift';
+  const isMixed = confirmation?.itemType === 'mixed';
+  const itemCount = confirmation?.itemCount ?? 1;
   const recipientName = confirmation?.giftRecipientName?.trim() || 'la persona elegida';
+  const successTitle = isMixed
+    ? 'Tu compra está confirmada'
+    : isGift
+      ? itemCount > 1
+        ? 'Tus regalos fueron enviados'
+        : `Tu regalo se envió a ${recipientName}`
+      : itemCount > 1
+        ? 'Tus sorpresas están aseguradas'
+        : '¡Tu sorpresa está asegurada!';
 
   useEffect(() => {
     const progressAnimation = Animated.timing(progress, {
@@ -78,26 +89,24 @@ export default function ConfirmacionReserva({ onNavigate, confirmation }: Confir
           <Text style={isProcessing ? styles.title : styles.successTitle}>
             {isProcessing
               ? 'Se está procesando el pago'
-              : isGift
-                ? `Tu regalo se envió a ${recipientName}`
-                : '¡Tu sorpresa está asegurada!'}
+              : successTitle}
           </Text>
           <Text style={styles.subtitle}>
             {isProcessing
               ? 'Estamos confirmando tu operación. Esto puede tardar unos segundos.'
-              : isGift
+              : isGift || isMixed
                 ? 'La persona recibirá la experiencia sorpresa con los datos que cargaste.'
                 : 'En 48hs vas a recibir todo lo que necesitás saber.'}
           </Text>
         </View>
 
         <Card>
-          <Text style={styles.cardTitle}>{isGift ? 'Estado del regalo' : 'Estado de la reserva'}</Text>
+          <Text style={styles.cardTitle}>{isGift ? 'Estado del regalo' : isMixed ? 'Estado de la compra' : 'Estado de la reserva'}</Text>
           <Text style={styles.cardText}>
             {isProcessing
               ? 'Procesando pago y preparando la confirmación...'
-              : isGift
-                ? 'Pago confirmado. El regalo ya fue enviado.'
+              : isGift || isMixed
+                ? 'Pago confirmado. La compra ya fue procesada.'
                 : 'Pago confirmado. Curando tu experiencia personalizada...'}
           </Text>
           <View style={styles.progressTrack}>

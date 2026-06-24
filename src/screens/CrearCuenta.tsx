@@ -1,39 +1,35 @@
 import React, { useState } from 'react';
-import { Alert, ImageBackground, ScrollView, Text, TextInput, View } from 'react-native';
+import { ImageBackground, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import AppShell from '../components/AppShell';
 import PrimaryButton from '../components/PrimaryButton';
-import { ScreenProps } from '../navigation';
-import { Screen } from '../types';
+import { AuthScreenProps } from '../navigation';
 import { styles } from '../theme/styles';
 
-export default function CrearCuenta({ onNavigate }: ScreenProps) {
+export default function CrearCuenta({ onLogin, onRegister }: AuthScreenProps) {
+  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
+  const [formError, setFormError] = useState('');
 
-  const handleLogin = () => {
-    if (email.trim().toLowerCase() !== 'cliente1@gmail.com') {
-      setLoginError('El usuario ingresado no es correcto. Usá cliente1@gmail.com.');
-      Alert.alert('Usuario incorrecto', 'El usuario debe ser cliente1@gmail.com.');
+  const clearFormError = () => setFormError('');
+
+  const handleSubmit = () => {
+    const error = mode === 'login'
+      ? onLogin(email, password)
+      : onRegister(name, age, email, password);
+
+    if (error) {
+      setFormError(error);
       return;
     }
 
-    if (password !== 'cliente123') {
-      setLoginError('La contraseña ingresada no es correcta. Usá cliente123.');
-      Alert.alert('Contraseña incorrecta', 'La contraseña debe ser cliente123.');
-      return;
-    }
-
-    setLoginError('');
-    onNavigate(Screen.PREFERENCIAS, 'push');
+    setFormError('');
   };
 
   return (
-    <AppShell
-      title="PlanGo"
-      rightText="?"
-      onRightPress={() => Alert.alert('Ayuda', 'Ingresá con el usuario y contraseña de prueba.')}
-    >
+    <AppShell title="PlanGo">
       <ScrollView contentContainerStyle={styles.content}>
         <ImageBackground
           source={{ uri: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=800' }}
@@ -47,7 +43,59 @@ export default function CrearCuenta({ onNavigate }: ScreenProps) {
 
         <Text style={styles.subtitle}>Tu conserje personal para momentos inolvidables.</Text>
 
-        <Text style={styles.separator}>Ingresá con tu usuario de prueba</Text>
+        <View style={styles.paymentMethodRow}>
+          <Pressable
+            onPress={() => {
+              setMode('login');
+              clearFormError();
+            }}
+            style={[styles.paymentMethodButton, mode === 'login' && styles.paymentMethodButtonActive]}
+          >
+            <Text style={[styles.paymentMethodText, mode === 'login' && styles.paymentMethodTextActive]}>
+              Iniciar sesión
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              setMode('register');
+              clearFormError();
+            }}
+            style={[styles.paymentMethodButton, mode === 'register' && styles.paymentMethodButtonActive]}
+          >
+            <Text style={[styles.paymentMethodText, mode === 'register' && styles.paymentMethodTextActive]}>
+              Registrarme
+            </Text>
+          </Pressable>
+        </View>
+
+        <Text style={styles.separator}>
+          {mode === 'login' ? 'Ingresá con tu usuario' : 'Creá tu usuario'}
+        </Text>
+
+        {mode === 'register' ? (
+          <>
+            <TextInput
+              placeholder="Nombre"
+              value={name}
+              onChangeText={(value) => {
+                setName(value);
+                clearFormError();
+              }}
+              style={styles.input}
+            />
+            <TextInput
+              placeholder="Edad"
+              keyboardType="numeric"
+              value={age}
+              onChangeText={(value) => {
+                setAge(value.replace(/\D/g, ''));
+                clearFormError();
+              }}
+              style={styles.input}
+            />
+          </>
+        ) : null}
+
         <TextInput
           placeholder="nombre@ejemplo.com"
           keyboardType="email-address"
@@ -55,7 +103,7 @@ export default function CrearCuenta({ onNavigate }: ScreenProps) {
           value={email}
           onChangeText={(value) => {
             setEmail(value);
-            setLoginError('');
+            clearFormError();
           }}
           style={styles.input}
         />
@@ -65,16 +113,17 @@ export default function CrearCuenta({ onNavigate }: ScreenProps) {
           value={password}
           onChangeText={(value) => {
             setPassword(value);
-            setLoginError('');
+            clearFormError();
           }}
           style={styles.input}
         />
-        {loginError ? <Text style={styles.errorText}>{loginError}</Text> : null}
-        <PrimaryButton variant="secondary" onPress={handleLogin}>
-          Continuar
+
+        {formError ? <Text style={styles.errorText}>{formError}</Text> : null}
+
+        <PrimaryButton variant="secondary" onPress={handleSubmit}>
+          {mode === 'login' ? 'Iniciar sesión' : 'Registrarme'}
         </PrimaryButton>
 
-        <Text style={styles.legal}>Al continuar, aceptas nuestros Términos de Servicio y Política de Privacidad.</Text>
       </ScrollView>
     </AppShell>
   );

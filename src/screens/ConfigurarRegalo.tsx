@@ -8,6 +8,7 @@ import SectionTitle from '../components/SectionTitle';
 import { GiftConfigScreenProps } from '../navigation';
 import { styles } from '../theme/styles';
 import { Screen } from '../types';
+import { getCompletedDateError, getCompletedTimeRangeError, isBeforeToday, validateDateAndTime } from '../utils/dateTimeValidation';
 
 export default function ConfigurarRegalo({ onNavigate, giftPackTitle, giftPrice }: GiftConfigScreenProps) {
   const [date, setDate] = useState('');
@@ -20,6 +21,8 @@ export default function ConfigurarRegalo({ onNavigate, giftPackTitle, giftPrice 
   const [recipientName, setRecipientName] = useState('');
   const [recipientEmail, setRecipientEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [dateError, setDateError] = useState('');
+  const [timeError, setTimeError] = useState('');
 
   const monthNames = [
     'Enero',
@@ -91,7 +94,26 @@ export default function ConfigurarRegalo({ onNavigate, giftPackTitle, giftPrice 
 
   const getPriceValue = (price: string) => Number(price.replace(/\D/g, ''));
 
+  const updateDateError = (nextDate: string) => {
+    setDateError(getCompletedDateError(nextDate) ?? '');
+  };
+
+  const updateTimeError = (nextTimeFrom: string, nextTimeTo: string) => {
+    setTimeError(getCompletedTimeRangeError(nextTimeFrom, nextTimeTo) ?? '');
+  };
+
   const confirmGift = () => {
+    const validationError = validateDateAndTime(date, timeFrom, timeTo);
+
+    if (validationError) {
+      if (validationError.toLowerCase().includes('fecha')) {
+        setDateError(validationError);
+      } else {
+        setTimeError(validationError);
+      }
+      return;
+    }
+
     const packTitle = giftPackTitle ?? 'Pack Premium';
     const packPrice = giftPrice ?? '$35.000';
 
@@ -153,7 +175,12 @@ export default function ConfigurarRegalo({ onNavigate, giftPackTitle, giftPrice 
         <SectionTitle title="Fecha" />
         <TextInput
           value={date}
-          onChangeText={(value) => setDate(formatTypedDate(value))}
+          onFocus={() => setCalendarOpen(true)}
+          onChangeText={(value) => {
+            const nextDate = formatTypedDate(value);
+            setDate(nextDate);
+            updateDateError(nextDate);
+          }}
           keyboardType="numeric"
           placeholder="Escribí dd/mm/aaaa"
           style={styles.input}
@@ -184,19 +211,31 @@ export default function ConfigurarRegalo({ onNavigate, giftPackTitle, giftPrice 
               {getCalendarDays().map((day, index) => {
                 const formattedDay = day ? formatDate(day) : '';
                 const isSelected = formattedDay === date;
+                const isDisabled = !day || isBeforeToday(day);
 
                 return (
                   <Pressable
                     key={`${formattedDay}-${index}`}
-                    disabled={!day}
+                    disabled={isDisabled}
                     onPress={() => {
-                      if (!day) return;
+                      if (!day || isDisabled) return;
                       setDate(formatDate(day));
+                      setDateError('');
                       setCalendarOpen(false);
                     }}
-                    style={[styles.calendarDay, isSelected && styles.calendarDaySelected]}
+                    style={[
+                      styles.calendarDay,
+                      isSelected && styles.calendarDaySelected,
+                      isDisabled && styles.calendarDayDisabled,
+                    ]}
                   >
-                    <Text style={[styles.calendarDayText, isSelected && styles.calendarDayTextSelected]}>
+                    <Text
+                      style={[
+                        styles.calendarDayText,
+                        isSelected && styles.calendarDayTextSelected,
+                        isDisabled && styles.calendarDayTextDisabled,
+                      ]}
+                    >
                       {day ? day.getDate() : ''}
                     </Text>
                   </Pressable>
@@ -205,6 +244,7 @@ export default function ConfigurarRegalo({ onNavigate, giftPackTitle, giftPrice 
             </View>
           </Card>
         ) : null}
+        {dateError ? <Text style={styles.errorText}>{dateError}</Text> : null}
 
         <SectionTitle title="Lugar" />
         <TextInput value={location} onChangeText={setLocation} placeholder="Barrio o localidad" style={styles.input} />
@@ -220,7 +260,11 @@ export default function ConfigurarRegalo({ onNavigate, giftPackTitle, giftPrice 
             <Text style={styles.meta}>Desde</Text>
             <TextInput
               value={timeFrom}
-              onChangeText={(value) => setTimeFrom(formatTime(value))}
+              onChangeText={(value) => {
+                const nextTimeFrom = formatTime(value);
+                setTimeFrom(nextTimeFrom);
+                updateTimeError(nextTimeFrom, timeTo);
+              }}
               keyboardType="numeric"
               placeholder="hh:mm"
               style={styles.inputInline}
@@ -230,13 +274,18 @@ export default function ConfigurarRegalo({ onNavigate, giftPackTitle, giftPrice 
             <Text style={styles.meta}>Hasta</Text>
             <TextInput
               value={timeTo}
-              onChangeText={(value) => setTimeTo(formatTime(value))}
+              onChangeText={(value) => {
+                const nextTimeTo = formatTime(value);
+                setTimeTo(nextTimeTo);
+                updateTimeError(timeFrom, nextTimeTo);
+              }}
               keyboardType="numeric"
               placeholder="hh:mm"
               style={styles.inputInline}
             />
           </View>
         </View>
+        {timeError ? <Text style={styles.errorText}>{timeError}</Text> : null}
 
         <SectionTitle title="Preferencias adicionales" />
         <View style={styles.chipWrap}>
@@ -252,6 +301,7 @@ export default function ConfigurarRegalo({ onNavigate, giftPackTitle, giftPrice 
           <Text style={styles.cardText}>Para: {recipientName || 'Sin nombre'}</Text>
           <Text style={styles.cardText}>Mail: {recipientEmail || 'Sin mail'}</Text>
         </Card>
+
       </ScrollView>
 
       <View style={[styles.footerBar, styles.footerBarWithNav]}>

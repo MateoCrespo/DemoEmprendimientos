@@ -8,6 +8,7 @@ import SectionTitle from '../components/SectionTitle';
 import { ConfigScreenProps } from '../navigation';
 import { Screen } from '../types';
 import { styles } from '../theme/styles';
+import { getCompletedDateError, getCompletedTimeRangeError, isBeforeToday, validateDateAndTime } from '../utils/dateTimeValidation';
 
 export default function ConfigurarExperiencia({
   onNavigate,
@@ -24,6 +25,8 @@ export default function ConfigurarExperiencia({
   const [locationSearch, setLocationSearch] = useState(selectedLocation ?? '');
   const [timeFrom, setTimeFrom] = useState('');
   const [timeTo, setTimeTo] = useState('');
+  const [dateError, setDateError] = useState('');
+  const [timeError, setTimeError] = useState('');
   const [budgetFrom, setBudgetFrom] = useState('0');
   const [budgetTo, setBudgetTo] = useState('10000');
   const [trackWidth, setTrackWidth] = useState(1);
@@ -192,6 +195,44 @@ export default function ConfigurarExperiencia({
     setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + amount, 1));
   };
 
+  const updateDateError = (nextDate: string) => {
+    setDateError(getCompletedDateError(nextDate) ?? '');
+  };
+
+  const updateTimeError = (nextTimeFrom: string, nextTimeTo: string) => {
+    setTimeError(getCompletedTimeRangeError(nextTimeFrom, nextTimeTo) ?? '');
+  };
+
+  const continueToPayment = () => {
+    const validationError = validateDateAndTime(date, timeFrom, timeTo);
+
+    if (validationError) {
+      if (validationError.toLowerCase().includes('fecha')) {
+        setDateError(validationError);
+      } else {
+        setTimeError(validationError);
+      }
+      return;
+    }
+
+    setDateError('');
+    setTimeError('');
+    onNavigate(Screen.PAGO, 'push', {
+      activityType: types[0],
+      timeFrom,
+      timeTo,
+      location,
+      experienceTitle: selectedExperienceTitle ?? 'Experiencia sorpresa',
+      experienceDescription: selectedExperienceDescription ?? 'Plan curado según tus preferencias',
+      experienceImage:
+        selectedExperienceImage ??
+        'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&q=80&w=400',
+      date,
+      budgetFrom: budgetFromNumber,
+      budgetTo: budgetToNumber,
+    });
+  };
+
   const filteredLocations = locationOptions.filter((place) =>
     place.toLowerCase().includes(locationSearch.trim().toLowerCase()),
   );
@@ -218,9 +259,14 @@ export default function ConfigurarExperiencia({
         <SectionTitle title="Fecha" />
         <TextInput
           value={date}
-          onChangeText={(value) => setDate(formatTypedDate(value))}
+          onFocus={() => setCalendarOpen(true)}
+          onChangeText={(value) => {
+            const nextDate = formatTypedDate(value);
+            setDate(nextDate);
+            updateDateError(nextDate);
+          }}
           keyboardType="numeric"
-          placeholder="Escribí dd/mm/aaaa"
+          placeholder="dd/mm/aaaa"
           style={styles.input}
         />
         <Pressable onPress={() => setCalendarOpen(!calendarOpen)}>
@@ -249,19 +295,31 @@ export default function ConfigurarExperiencia({
               {getCalendarDays().map((day, index) => {
                 const formattedDay = day ? formatDate(day) : '';
                 const isSelected = formattedDay === date;
+                const isDisabled = !day || isBeforeToday(day);
 
                 return (
                   <Pressable
                     key={`${formattedDay}-${index}`}
-                    disabled={!day}
+                    disabled={isDisabled}
                     onPress={() => {
-                      if (!day) return;
+                      if (!day || isDisabled) return;
                       setDate(formatDate(day));
+                      setDateError('');
                       setCalendarOpen(false);
                     }}
-                    style={[styles.calendarDay, isSelected && styles.calendarDaySelected]}
+                    style={[
+                      styles.calendarDay,
+                      isSelected && styles.calendarDaySelected,
+                      isDisabled && styles.calendarDayDisabled,
+                    ]}
                   >
-                    <Text style={[styles.calendarDayText, isSelected && styles.calendarDayTextSelected]}>
+                    <Text
+                      style={[
+                        styles.calendarDayText,
+                        isSelected && styles.calendarDayTextSelected,
+                        isDisabled && styles.calendarDayTextDisabled,
+                      ]}
+                    >
                       {day ? day.getDate() : ''}
                     </Text>
                   </Pressable>
@@ -270,6 +328,7 @@ export default function ConfigurarExperiencia({
             </View>
           </Card>
         ) : null}
+        {dateError ? <Text style={styles.errorText}>{dateError}</Text> : null}
 
         <SectionTitle title="Rango horario" />
         <View style={styles.budgetInputs}>
@@ -277,7 +336,11 @@ export default function ConfigurarExperiencia({
             <Text style={styles.meta}>Desde</Text>
             <TextInput
               value={timeFrom}
-              onChangeText={(value) => setTimeFrom(formatTime(value))}
+              onChangeText={(value) => {
+                const nextTimeFrom = formatTime(value);
+                setTimeFrom(nextTimeFrom);
+                updateTimeError(nextTimeFrom, timeTo);
+              }}
               keyboardType="numeric"
               placeholder="hh:mm"
               style={styles.inputInline}
@@ -287,13 +350,18 @@ export default function ConfigurarExperiencia({
             <Text style={styles.meta}>Hasta</Text>
             <TextInput
               value={timeTo}
-              onChangeText={(value) => setTimeTo(formatTime(value))}
+              onChangeText={(value) => {
+                const nextTimeTo = formatTime(value);
+                setTimeTo(nextTimeTo);
+                updateTimeError(timeFrom, nextTimeTo);
+              }}
               keyboardType="numeric"
               placeholder="hh:mm"
               style={styles.inputInline}
             />
           </View>
         </View>
+        {timeError ? <Text style={styles.errorText}>{timeError}</Text> : null}
 
         <SectionTitle title="Lugar" />
         <TextInput
@@ -406,25 +474,7 @@ export default function ConfigurarExperiencia({
           </Card>
         </Pressable>
 
-        <PrimaryButton
-          variant="secondary"
-          onPress={() =>
-            onNavigate(Screen.PAGO, 'push', {
-              activityType: types[0],
-              timeFrom,
-              timeTo,
-              location,
-              experienceTitle: selectedExperienceTitle ?? 'Experiencia sorpresa',
-              experienceDescription: selectedExperienceDescription ?? 'Plan curado según tus preferencias',
-              experienceImage:
-                selectedExperienceImage ??
-                'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80&w=400',
-              date,
-              budgetFrom: budgetFromNumber,
-              budgetTo: budgetToNumber,
-            })
-          }
-        >
+        <PrimaryButton variant="secondary" onPress={continueToPayment}>
           Vivir experiencia
         </PrimaryButton>
 
