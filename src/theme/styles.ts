@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.surface,
   },
   headerSide: {
     width: 82,
@@ -28,12 +28,12 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   logo: {
-    color: colors.surface,
+    color: colors.secondary,
     fontSize: 22,
     fontWeight: '800',
   },
   headerAction: {
-    color: colors.surface,
+    color: colors.primary,
     fontWeight: '800',
   },
   iconButton: {
@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconText: {
-    color: colors.surface,
+    color: colors.primary,
     fontSize: 34,
     lineHeight: 34,
   },
@@ -119,6 +119,13 @@ export const styles = StyleSheet.create({
     lineHeight: 36,
     fontWeight: '900',
   },
+  successTitle: {
+    color: '#167a3f',
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
   titleSmall: {
     color: colors.primary,
     fontSize: 21,
@@ -148,6 +155,19 @@ export const styles = StyleSheet.create({
     lineHeight: 18,
     textAlign: 'center',
   },
+  errorText: {
+    color: colors.secondary,
+    fontSize: 13,
+    fontWeight: '800',
+    lineHeight: 18,
+    textAlign: 'center',
+  },
+  successText: {
+    color: colors.primary,
+    fontSize: 13,
+    fontWeight: '900',
+    lineHeight: 18,
+  },
   input: {
     backgroundColor: colors.card,
     borderColor: colors.border,
@@ -167,6 +187,16 @@ export const styles = StyleSheet.create({
     minHeight: 44,
     color: colors.text,
     fontSize: 15,
+  },
+  inputDisplayText: {
+    color: colors.text,
+    fontSize: 15,
+    lineHeight: 50,
+  },
+  inputPlaceholder: {
+    color: colors.muted,
+    fontSize: 15,
+    lineHeight: 50,
   },
   textArea: {
     minHeight: 100,
@@ -331,6 +361,26 @@ export const styles = StyleSheet.create({
     gap: 14,
     paddingRight: 18,
   },
+  carouselList: {
+    gap: 14,
+    paddingRight: 18,
+  },
+  carouselDots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: -4,
+  },
+  carouselDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.border,
+  },
+  carouselDotActive: {
+    width: 22,
+    backgroundColor: colors.secondary,
+  },
   featuredCard: {
     width: 290,
     gap: 10,
@@ -434,6 +484,81 @@ export const styles = StyleSheet.create({
     gap: 12,
     marginTop: 12,
   },
+  budgetInputs: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  budgetInputGroup: {
+    flex: 1,
+    gap: 6,
+  },
+  budgetSlider: {
+    height: 42,
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  budgetTrack: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: colors.cardMuted,
+  },
+  budgetTrackActive: {
+    position: 'absolute',
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: colors.secondary,
+  },
+  budgetThumb: {
+    position: 'absolute',
+    width: 24,
+    height: 24,
+    marginLeft: -12,
+    borderRadius: 12,
+    backgroundColor: colors.surface,
+    borderWidth: 4,
+    borderColor: colors.secondary,
+  },
+  calendarHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  calendarArrow: {
+    width: 38,
+    height: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  calendarGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  calendarWeekDay: {
+    width: '12.6%',
+    textAlign: 'center',
+    color: colors.muted,
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  calendarDay: {
+    width: '12.6%',
+    aspectRatio: 1,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.cardSoft,
+  },
+  calendarDaySelected: {
+    backgroundColor: colors.secondary,
+  },
+  calendarDayText: {
+    color: colors.primary,
+    fontWeight: '800',
+  },
+  calendarDayTextSelected: {
+    color: colors.surface,
+  },
   kicker: {
     color: colors.secondary,
     textTransform: 'uppercase',
@@ -454,6 +579,112 @@ export const styles = StyleSheet.create({
     height: 150,
     borderRadius: 14,
     backgroundColor: colors.cardMuted,
+  },
+  ticketSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  ticketStepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  stepperButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.secondary,
+  },
+  stepperButtonText: {
+    color: colors.surface,
+    fontSize: 20,
+    fontWeight: '900',
+  },
+  ticketCount: {
+    minWidth: 24,
+    textAlign: 'center',
+    color: colors.primary,
+    fontSize: 18,
+    fontWeight: '900',
+  },
+  paymentMethodRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  paymentMethodButton: {
+    flex: 1,
+    minHeight: 44,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.cardSoft,
+  },
+  paymentMethodButtonActive: {
+    backgroundColor: colors.secondary,
+    borderColor: colors.secondary,
+  },
+  paymentMethodText: {
+    color: colors.primary,
+    fontWeight: '900',
+  },
+  paymentMethodTextActive: {
+    color: colors.surface,
+  },
+  cardFieldsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+  },
+  cardExpirationInput: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  cardSecurityInput: {
+    width: 96,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    minHeight: 44,
+    color: colors.text,
+    fontSize: 15,
+  },
+  expirationPicker: {
+    gap: 12,
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: colors.cardSoft,
+  },
+  expirationYearGroup: {
+    gap: 8,
+  },
+  expirationMonthButton: {
+    minWidth: 42,
+    minHeight: 34,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  expirationMonthButtonActive: {
+    backgroundColor: colors.secondary,
+    borderColor: colors.secondary,
+  },
+  expirationMonthText: {
+    color: colors.primary,
+    fontWeight: '900',
+  },
+  expirationMonthTextActive: {
+    color: colors.surface,
   },
   divider: {
     height: 1,
@@ -489,6 +720,23 @@ export const styles = StyleSheet.create({
     textAlignVertical: 'center',
     fontSize: 70,
   },
+  trumpetBadge: {
+    width: 150,
+    height: 150,
+    borderRadius: 38,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  trumpetBadgeSuccess: {
+    backgroundColor: '#e8f7ee',
+    borderColor: '#167a3f',
+  },
+  trumpetIcon: {
+    fontSize: 76,
+  },
   progressTrack: {
     height: 8,
     borderRadius: 999,
@@ -499,6 +747,9 @@ export const styles = StyleSheet.create({
     width: '34%',
     height: 8,
     backgroundColor: colors.secondary,
+  },
+  progressFillSuccess: {
+    backgroundColor: '#167a3f',
   },
   timerRow: {
     flexDirection: 'row',

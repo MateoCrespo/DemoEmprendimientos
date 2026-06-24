@@ -5,11 +5,11 @@ import { Screen } from '../types';
 import { styles } from '../theme/styles';
 
 const items = [
-  { id: 'home', label: 'Home', screen: Screen.INICIO },
-  { id: 'discover', label: 'Discover', screen: Screen.CONFIGURAR },
-  { id: 'cart', label: 'Cart', screen: Screen.PAGO },
-  { id: 'alerts', label: 'Alerts', screen: Screen.AVENTURA_DISCOVERY },
-  { id: 'profile', label: 'Profile', screen: Screen.REGALAR },
+  { id: 'home', label: 'Inicio', screen: Screen.INICIO },
+  { id: 'discover', label: 'Sorprendete', screen: Screen.CONFIGURAR },
+  { id: 'cart', label: 'Carrito', screen: Screen.PAGO },
+  { id: 'alerts', label: 'Próximos', screen: Screen.AVENTURA_DISCOVERY },
+  { id: 'profile', label: 'Regalo', screen: Screen.REGALAR },
 ] as const;
 
 function navIcon(id: string) {
@@ -17,11 +17,13 @@ function navIcon(id: string) {
     case 'home':
       return '⌂';
     case 'discover':
-      return '◇';
+      return '⌕';
     case 'cart':
-      return '▣';
+      return '🛒';
     case 'alerts':
       return '!';
+    case 'profile':
+      return '🎁';
     default:
       return '○';
   }

@@ -4,11 +4,11 @@ import AppShell from '../components/AppShell';
 import Chip from '../components/Chip';
 import PrimaryButton from '../components/PrimaryButton';
 import SectionTitle from '../components/SectionTitle';
-import { ScreenProps } from '../navigation';
+import { SelectedExperienceScreenProps } from '../navigation';
 import { Screen } from '../types';
 import { styles } from '../theme/styles';
 
-export default function EncuestaCalidad({ onNavigate }: ScreenProps) {
+export default function EncuestaCalidad({ onNavigate, experience }: SelectedExperienceScreenProps) {
   const [rating, setRating] = useState(0);
   const [ambient, setAmbient] = useState('');
   const [match, setMatch] = useState('');
@@ -24,13 +24,17 @@ export default function EncuestaCalidad({ onNavigate }: ScreenProps) {
     <AppShell title="Tu Plan Secreto" onBack={() => onNavigate(Screen.INICIO, 'push_back')} rightText="⋮">
       <ScrollView contentContainerStyle={styles.contentWithNav}>
         <ImageBackground
-          source={{ uri: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&q=80&w=800' }}
+          source={{
+            uri:
+              experience?.destinationImage ??
+              'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&q=80&w=800',
+          }}
           style={styles.feedbackHero}
           imageStyle={styles.heroImage}
         >
           <View style={styles.imageOverlay} />
           <Text style={styles.planTag}>Completado</Text>
-          <Text style={styles.featuredTitle}>Cata de Vinos en Cava Secreta</Text>
+          <Text style={styles.featuredTitle}>{experience?.destinationTitle ?? 'Cata de Vinos en Cava Secreta'}</Text>
         </ImageBackground>
 
         <Text style={styles.title}>¿Qué te pareció tu aventura?</Text>
@@ -74,7 +78,7 @@ export default function EncuestaCalidad({ onNavigate }: ScreenProps) {
           style={[styles.input, styles.textArea]}
         />
         <TextInput placeholder="Tip directo para el anfitrión" value={tip} onChangeText={setTip} style={styles.input} />
-        <PrimaryButton onPress={() => onNavigate(Screen.REGALAR, 'none')}>Enviar Feedback</PrimaryButton>
+        <PrimaryButton onPress={() => onNavigate(Screen.INICIO, 'none')}>Enviar Feedback</PrimaryButton>
       </ScrollView>
     </AppShell>
   );

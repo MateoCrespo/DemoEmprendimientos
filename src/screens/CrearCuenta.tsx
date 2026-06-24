@@ -9,12 +9,30 @@ import { styles } from '../theme/styles';
 export default function CrearCuenta({ onNavigate }: ScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  const handleLogin = () => {
+    if (email.trim().toLowerCase() !== 'cliente1@gmail.com') {
+      setLoginError('El usuario ingresado no es correcto. Usá cliente1@gmail.com.');
+      Alert.alert('Usuario incorrecto', 'El usuario debe ser cliente1@gmail.com.');
+      return;
+    }
+
+    if (password !== 'cliente123') {
+      setLoginError('La contraseña ingresada no es correcta. Usá cliente123.');
+      Alert.alert('Contraseña incorrecta', 'La contraseña debe ser cliente123.');
+      return;
+    }
+
+    setLoginError('');
+    onNavigate(Screen.PREFERENCIAS, 'push');
+  };
 
   return (
     <AppShell
       title="PlanGo"
       rightText="?"
-      onRightPress={() => Alert.alert('Ayuda', 'Ingresá con email o seguí con una cuenta social.')}
+      onRightPress={() => Alert.alert('Ayuda', 'Ingresá con el usuario y contraseña de prueba.')}
     >
       <ScrollView contentContainerStyle={styles.content}>
         <ImageBackground
@@ -29,30 +47,30 @@ export default function CrearCuenta({ onNavigate }: ScreenProps) {
 
         <Text style={styles.subtitle}>Tu conserje personal para momentos inolvidables.</Text>
 
-        <View style={styles.stack}>
-          <PrimaryButton variant="muted" onPress={() => onNavigate(Screen.PREFERENCIAS, 'push')}>
-            Continuar con Google
-          </PrimaryButton>
-          <PrimaryButton onPress={() => onNavigate(Screen.PREFERENCIAS, 'push')}>Continuar con Apple</PrimaryButton>
-        </View>
-
-        <Text style={styles.separator}>O continuar con email</Text>
+        <Text style={styles.separator}>Ingresá con tu usuario de prueba</Text>
         <TextInput
           placeholder="nombre@ejemplo.com"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={(value) => {
+            setEmail(value);
+            setLoginError('');
+          }}
           style={styles.input}
         />
         <TextInput
           placeholder="Contraseña"
           secureTextEntry
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(value) => {
+            setPassword(value);
+            setLoginError('');
+          }}
           style={styles.input}
         />
-        <PrimaryButton variant="secondary" onPress={() => onNavigate(Screen.PREFERENCIAS, 'push')}>
+        {loginError ? <Text style={styles.errorText}>{loginError}</Text> : null}
+        <PrimaryButton variant="secondary" onPress={handleLogin}>
           Continuar
         </PrimaryButton>
 

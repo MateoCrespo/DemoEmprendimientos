@@ -4,18 +4,39 @@ import AppShell from '../components/AppShell';
 import Chip from '../components/Chip';
 import PrimaryButton from '../components/PrimaryButton';
 import SectionTitle from '../components/SectionTitle';
-import { ScreenProps } from '../navigation';
+import { interestOptions, outgoingStyleOptions, placeOptions, restrictionOptions } from '../data/preferenceOptions';
+import { ProfileAwareScreenProps } from '../navigation';
 import { Screen } from '../types';
 import { styles } from '../theme/styles';
 
-export default function TusPreferencias({ onNavigate }: ScreenProps) {
-  const [interests, setInterests] = useState<string[]>([]);
-  const [places, setPlaces] = useState<string[]>([]);
-  const [style, setStyle] = useState('');
-  const [restrictions, setRestrictions] = useState<string[]>([]);
+export default function TusPreferencias({ onNavigate, profile, onProfileChange }: ProfileAwareScreenProps) {
+  const [interests, setInterests] = useState<string[]>(profile.preferences.interests);
+  const [places, setPlaces] = useState<string[]>(profile.preferences.visitedPlaces);
+  const [stylesOut, setStylesOut] = useState<string[]>(profile.preferences.outgoingStyle);
+  const [restrictions, setRestrictions] = useState<string[]>(profile.preferences.restrictions);
+  const [placeSearch, setPlaceSearch] = useState('');
+
+  const filteredPlaces = placeOptions.filter((place) =>
+    place.toLowerCase().includes(placeSearch.trim().toLowerCase()),
+  );
+  const visiblePlaces = placeSearch.trim() ? filteredPlaces : placeOptions.slice(0, 5);
+  const customPlace = placeSearch.trim();
 
   const toggle = (value: string, list: string[], setList: (next: string[]) => void) => {
     setList(list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
+  };
+
+  const savePreferences = () => {
+    onProfileChange({
+      ...profile,
+      preferences: {
+        interests,
+        visitedPlaces: places,
+        outgoingStyle: stylesOut,
+        restrictions,
+      },
+    });
+    onNavigate(Screen.INICIO, 'push');
   };
 
   return (
@@ -24,7 +45,7 @@ export default function TusPreferencias({ onNavigate }: ScreenProps) {
       rightText="Omitir"
       onRightPress={() => onNavigate(Screen.INICIO, 'none')}
     >
-      <ScrollView contentContainerStyle={styles.contentWithFooter}>
+      <ScrollView contentContainerStyle={[styles.contentWithFooter, { paddingBottom: 210 }]}>
         <View style={styles.progressRow}>
           <View style={[styles.progressBar, styles.progressBarActive]} />
           <View style={styles.progressBar} />
@@ -36,30 +57,46 @@ export default function TusPreferencias({ onNavigate }: ScreenProps) {
 
         <SectionTitle title="¿Qué te apasiona?" />
         <View style={styles.chipGrid}>
-          {['Gastronomía', 'Arte', 'Aventura', 'Música', 'Historia', 'Relax'].map((item) => (
+          {interestOptions.map((item) => (
             <Chip key={item} label={item} selected={interests.includes(item)} onPress={() => toggle(item, interests, setInterests)} />
           ))}
         </View>
 
         <SectionTitle title="Lugares que ya visitaste" />
-        <TextInput placeholder="Buscar barrios o hitos..." style={styles.input} />
+        <TextInput
+          placeholder="Buscar barrios o hitos..."
+          value={placeSearch}
+          onChangeText={setPlaceSearch}
+          style={styles.input}
+        />
         <View style={styles.chipWrap}>
-          {['Palermo Soho', 'San Telmo', 'Recoleta', 'Puerto Madero'].map((item) => (
+          {visiblePlaces.map((item) => (
             <Chip key={item} label={item} selected={places.includes(item)} onPress={() => toggle(item, places, setPlaces)} />
           ))}
+          {placeSearch.trim() && filteredPlaces.length === 0 ? (
+            <Chip
+              label={`Seleccionar "${customPlace}"`}
+              selected={places.includes(customPlace)}
+              onPress={() => toggle(customPlace, places, setPlaces)}
+            />
+          ) : null}
         </View>
 
         <SectionTitle title="Estilo de salida" />
-        {['En pareja', 'Con amigos', 'Solo/a', 'Familiar'].map((item) => (
-          <Pressable key={item} onPress={() => setStyle(item)} style={[styles.optionRow, style === item && styles.optionRowActive]}>
+        {outgoingStyleOptions.map((item) => (
+          <Pressable
+            key={item}
+            onPress={() => toggle(item, stylesOut, setStylesOut)}
+            style={[styles.optionRow, stylesOut.includes(item) && styles.optionRowActive]}
+          >
             <Text style={styles.optionText}>{item}</Text>
-            <Text style={styles.radio}>{style === item ? '●' : '○'}</Text>
+            <Text style={styles.radio}>{stylesOut.includes(item) ? '●' : '○'}</Text>
           </Pressable>
         ))}
 
         <SectionTitle title="Restricciones o preferencias" />
         <View style={styles.chipWrap}>
-          {['Vegetariano/Vegano', 'Sin TACC', 'Movilidad reducida', 'Pet friendly'].map((item) => (
+          {restrictionOptions.map((item) => (
             <Chip
               key={item}
               label={item}
@@ -71,10 +108,7 @@ export default function TusPreferencias({ onNavigate }: ScreenProps) {
       </ScrollView>
 
       <View style={styles.footerBar}>
-        <PrimaryButton variant="muted" onPress={() => onNavigate(Screen.CREAR_CUENTA, 'push_back')}>
-          Anterior
-        </PrimaryButton>
-        <PrimaryButton onPress={() => onNavigate(Screen.INICIO, 'push')}>Finalizar</PrimaryButton>
+        <PrimaryButton onPress={savePreferences}>Aceptar</PrimaryButton>
       </View>
     </AppShell>
   );

@@ -16,8 +16,8 @@ export default function RegalarExperiencia({ onNavigate }: ScreenProps) {
   return (
     <AppShell
       onBack={() => onNavigate(Screen.INICIO, 'push_back')}
-      rightText="Log out"
-      onRightPress={() => onNavigate(Screen.INICIO, 'push_back')}
+      rightText="👤"
+      onRightPress={() => onNavigate(Screen.PERFIL, 'push')}
       withBottomNav
       activeTab="profile"
       onNavigate={onNavigate}
