@@ -3,14 +3,16 @@ import { Animated, Pressable, ScrollView, Text, View } from 'react-native';
 import AppShell from '../components/AppShell';
 import Card from '../components/Card';
 import PrimaryButton from '../components/PrimaryButton';
-import { ScreenProps } from '../navigation';
+import { ConfirmationScreenProps } from '../navigation';
 import { Screen } from '../types';
 import { styles } from '../theme/styles';
 
-export default function ConfirmacionReserva({ onNavigate }: ScreenProps) {
+export default function ConfirmacionReserva({ onNavigate, confirmation }: ConfirmationScreenProps) {
   const [isProcessing, setIsProcessing] = useState(true);
   const progress = useRef(new Animated.Value(0)).current;
   const celebration = useRef(new Animated.Value(0)).current;
+  const isGift = confirmation?.itemType === 'gift';
+  const recipientName = confirmation?.giftRecipientName?.trim() || 'la persona elegida';
 
   useEffect(() => {
     const progressAnimation = Animated.timing(progress, {
@@ -74,19 +76,29 @@ export default function ConfirmacionReserva({ onNavigate }: ScreenProps) {
             <Text style={styles.trumpetIcon}>🎺</Text>
           </Animated.View>
           <Text style={isProcessing ? styles.title : styles.successTitle}>
-            {isProcessing ? 'Se está procesando el pago' : '¡Tu sorpresa está asegurada!'}
+            {isProcessing
+              ? 'Se está procesando el pago'
+              : isGift
+                ? `Tu regalo se envió a ${recipientName}`
+                : '¡Tu sorpresa está asegurada!'}
           </Text>
           <Text style={styles.subtitle}>
             {isProcessing
               ? 'Estamos confirmando tu operación. Esto puede tardar unos segundos.'
-              : 'En 48hs vas a recibir todo lo que necesitás saber.'}
+              : isGift
+                ? 'La persona recibirá la experiencia sorpresa con los datos que cargaste.'
+                : 'En 48hs vas a recibir todo lo que necesitás saber.'}
           </Text>
         </View>
 
         <Card>
-          <Text style={styles.cardTitle}>Estado de la reserva</Text>
+          <Text style={styles.cardTitle}>{isGift ? 'Estado del regalo' : 'Estado de la reserva'}</Text>
           <Text style={styles.cardText}>
-            {isProcessing ? 'Procesando pago y preparando tu reserva...' : 'Pago confirmado. Curando tu experiencia personalizada...'}
+            {isProcessing
+              ? 'Procesando pago y preparando la confirmación...'
+              : isGift
+                ? 'Pago confirmado. El regalo ya fue enviado.'
+                : 'Pago confirmado. Curando tu experiencia personalizada...'}
           </Text>
           <View style={styles.progressTrack}>
             <Animated.View
@@ -101,12 +113,14 @@ export default function ConfirmacionReserva({ onNavigate }: ScreenProps) {
 
         {!isProcessing ? (
           <>
-            <PrimaryButton variant="muted" onPress={() => onNavigate(Screen.AVENTURA_DISCOVERY, 'push')}>
-              Ver mis experiencias
+            <PrimaryButton variant="muted" onPress={() => onNavigate(isGift ? Screen.REGALAR : Screen.AVENTURA_DISCOVERY, 'push')}>
+              {isGift ? 'Hacer otro regalo' : 'Ver mis experiencias'}
             </PrimaryButton>
-            <Pressable onPress={() => onNavigate(Screen.CONFIGURAR, 'push')}>
-              <Text style={styles.linkCenter}>Sorprendete otra vez</Text>
-            </Pressable>
+            {!isGift ? (
+              <Pressable onPress={() => onNavigate(Screen.CONFIGURAR, 'push')}>
+                <Text style={styles.linkCenter}>Sorprendete otra vez</Text>
+              </Pressable>
+            ) : null}
           </>
         ) : null}
       </ScrollView>

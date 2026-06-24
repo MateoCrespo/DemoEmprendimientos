@@ -1,6 +1,7 @@
 import { Screen, TransitionType, UserExperience, UserPreferences } from './types';
 
 export interface NavigationOptions {
+  itemType?: 'experience' | 'gift';
   activityType?: string;
   location?: string;
   experienceTitle?: string;
@@ -11,6 +12,12 @@ export interface NavigationOptions {
   timeTo?: string;
   budgetFrom?: number;
   budgetTo?: number;
+  giftPackTitle?: string;
+  giftPrice?: string;
+  giftPriceValue?: number;
+  giftRecipientName?: string;
+  giftRecipientEmail?: string;
+  giftMessage?: string;
 }
 
 export interface CartState {
@@ -32,6 +39,15 @@ export interface ScreenProps {
   onNavigate: Navigate;
 }
 
+export interface ConfirmationInfo {
+  itemType?: 'experience' | 'gift';
+  giftRecipientName?: string;
+}
+
+export interface ConfirmationScreenProps extends ScreenProps {
+  confirmation?: ConfirmationInfo;
+}
+
 export interface UserProfile {
   name: string;
   age: string;
@@ -51,6 +67,11 @@ export interface ConfigScreenProps extends ScreenProps {
   selectedExperienceImage?: string;
 }
 
+export interface GiftConfigScreenProps extends ScreenProps {
+  giftPackTitle?: string;
+  giftPrice?: string;
+}
+
 export interface PaymentScreenProps extends ScreenProps {
   purchase?: NavigationOptions;
   cart: CartState;
@@ -64,4 +85,5 @@ export interface ExperiencesScreenProps extends ScreenProps {
 
 export interface SelectedExperienceScreenProps extends ScreenProps {
   experience?: UserExperience;
+  onFinishFeedback?: (experienceId: string) => void;
 }

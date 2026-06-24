@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, ImageBackground, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { ImageBackground, Pressable, ScrollView, Text, View } from 'react-native';
 import AppShell from '../components/AppShell';
 import Card from '../components/Card';
 import PrimaryButton from '../components/PrimaryButton';
@@ -10,8 +10,12 @@ import { styles } from '../theme/styles';
 
 export default function RegalarExperiencia({ onNavigate }: ScreenProps) {
   const [pack, setPack] = useState('premium');
-  const [recipient, setRecipient] = useState('Sofía García');
-  const [message, setMessage] = useState('Escribe algo que le saque una sonrisa...');
+  const packs = [
+    { id: 'explorador', title: 'Pack Explorador', price: '$15.000' },
+    { id: 'premium', title: 'Pack Premium', price: '$35.000' },
+    { id: 'vip', title: 'Pack VIP / Lujo', price: '$75.000' },
+  ];
+  const selectedPack = packs.find((item) => item.id === pack) ?? packs[1];
 
   return (
     <AppShell
@@ -22,7 +26,7 @@ export default function RegalarExperiencia({ onNavigate }: ScreenProps) {
       activeTab="profile"
       onNavigate={onNavigate}
     >
-      <ScrollView contentContainerStyle={styles.contentWithNav}>
+      <ScrollView contentContainerStyle={styles.contentWithNavAndFooter}>
         <ImageBackground
           source={{ uri: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80&w=800' }}
           style={styles.giftHero}
@@ -44,11 +48,7 @@ export default function RegalarExperiencia({ onNavigate }: ScreenProps) {
 
         <SectionTitle title="Elige un Pack" />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
-          {[
-            { id: 'explorador', title: 'Pack Explorador', price: '$150' },
-            { id: 'premium', title: 'Pack Premium', price: '$350' },
-            { id: 'vip', title: 'Pack VIP / Lujo', price: '$750' },
-          ].map((item) => (
+          {packs.map((item) => (
             <Pressable key={item.id} onPress={() => setPack(item.id)} style={[styles.packCard, pack === item.id && styles.packCardActive]}>
               <Text style={[styles.packPrice, pack === item.id && styles.whiteText]}>{item.price}</Text>
               <Text style={[styles.cardTitle, pack === item.id && styles.whiteText]}>{item.title}</Text>
@@ -57,29 +57,20 @@ export default function RegalarExperiencia({ onNavigate }: ScreenProps) {
             </Pressable>
           ))}
         </ScrollView>
-
-        <SectionTitle title="Personalización" />
-        <TextInput value={recipient} onChangeText={setRecipient} style={styles.input} />
-        <TextInput value={message} onChangeText={setMessage} style={[styles.input, styles.textAreaSmall]} multiline />
-
-        <Card dark>
-          <Text style={styles.ticketTitle}>¡Sorpresa, {recipient}!</Text>
-          <Text style={styles.whiteSoft}>Alguien quiere que vivas algo inolvidable.</Text>
-          <View style={styles.ticketCode}>
-            <Text style={styles.kickerCenter}>Código de Canje</Text>
-            <Text style={styles.cardTitle}>PLAN-GO-8821</Text>
-          </View>
-        </Card>
-
-        <PrimaryButton
-          onPress={() => {
-            Alert.alert('Regalo comprado', `¡Gracias por regalar una aventura PlanGo a ${recipient}!`);
-            onNavigate(Screen.INICIO, 'push_back');
-          }}
-        >
-          Comprar para regalar
-        </PrimaryButton>
       </ScrollView>
+
+      <View style={[styles.footerBar, styles.footerBarWithNav]}>
+        <PrimaryButton
+          onPress={() =>
+            onNavigate(Screen.CONFIGURAR_REGALO, 'push', {
+              giftPackTitle: selectedPack.title,
+              giftPrice: selectedPack.price,
+            })
+          }
+        >
+          Realizar regalo
+        </PrimaryButton>
+      </View>
     </AppShell>
   );
 }

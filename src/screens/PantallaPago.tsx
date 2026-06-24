@@ -22,8 +22,13 @@ export default function PantallaPago({ onNavigate, purchase, cart, onCartChange 
   const updateCart = (nextCart: Partial<CartState>) => {
     onCartChange({ ...cart, ...nextCart });
   };
+  const isGift = purchase?.itemType === 'gift';
 
   const generatedTicketPrice = useMemo(() => {
+    if (purchase?.giftPriceValue) {
+      return purchase.giftPriceValue;
+    }
+
     const minPrice = purchase?.budgetFrom ?? 10000;
     const maxPrice = purchase?.budgetTo ?? 50000;
     const roundStep = 1100;
@@ -31,7 +36,7 @@ export default function PantallaPago({ onNavigate, purchase, cart, onCartChange 
     const roundedPrice = Math.round(randomPrice / roundStep) * roundStep;
 
     return Math.min(Math.max(roundedPrice, minPrice), maxPrice);
-  }, [purchase?.budgetFrom, purchase?.budgetTo]);
+  }, [purchase?.budgetFrom, purchase?.budgetTo, purchase?.giftPriceValue]);
 
   useEffect(() => {
     if (!hasPurchase) {
@@ -160,7 +165,7 @@ export default function PantallaPago({ onNavigate, purchase, cart, onCartChange 
       onRightPress={() => onNavigate(Screen.INICIO, 'push_back')}
     >
       <ScrollView contentContainerStyle={styles.contentWithFooter}>
-        <Text style={styles.kicker}>Resumen del Plan</Text>
+        <Text style={styles.kicker}>{isGift ? 'Resumen del Regalo' : 'Resumen del Plan'}</Text>
         <View style={styles.experienceRow}>
           <Image
             source={{ uri: experienceImage }}
@@ -173,7 +178,15 @@ export default function PantallaPago({ onNavigate, purchase, cart, onCartChange 
         </View>
 
         <Card>
-          <Text style={styles.cardTitle}>Detalle de la experiencia</Text>
+          <Text style={styles.cardTitle}>{isGift ? 'Detalle del regalo' : 'Detalle de la experiencia'}</Text>
+          {isGift ? (
+            <>
+              <PaymentLine label="Pack" value={purchase?.giftPackTitle ?? 'Pack Premium'} />
+              <PaymentLine label="Para" value={purchase?.giftRecipientName || 'Sin nombre'} />
+              <PaymentLine label="Mail" value={purchase?.giftRecipientEmail || 'Sin mail'} />
+              {purchase?.giftMessage ? <PaymentLine label="Mensaje" value={purchase.giftMessage} /> : null}
+            </>
+          ) : null}
           <PaymentLine label="Lugar" value={experienceLocation} />
           <PaymentLine label="Fecha" value={purchase?.date || 'Sin seleccionar'} />
           <PaymentLine label="Horario" value={timeRange} />
@@ -200,8 +213,8 @@ export default function PantallaPago({ onNavigate, purchase, cart, onCartChange 
           <Text style={styles.cardTitle}>Detalles del pago</Text>
           <View style={styles.ticketSelector}>
             <View>
-              <Text style={styles.cardTitle}>Cantidad de entradas</Text>
-              <Text style={styles.meta}>Máximo 10 entradas por compra</Text>
+              <Text style={styles.cardTitle}>{isGift ? 'Cantidad de regalos' : 'Cantidad de entradas'}</Text>
+              <Text style={styles.meta}>{isGift ? 'Podés comprar hasta 10 regalos iguales' : 'Máximo 10 entradas por compra'}</Text>
             </View>
             <View style={styles.ticketStepper}>
               <Pressable onPress={decreaseTickets} style={styles.stepperButton}>
@@ -214,8 +227,11 @@ export default function PantallaPago({ onNavigate, purchase, cart, onCartChange 
             </View>
           </View>
 
-          <PaymentLine label="Precio por entrada" value={`$${ticketPrice.toLocaleString('es-AR')}`} />
-          <PaymentLine label={`${cart.ticketCount}x Entrada General`} value={`$${subtotal.toLocaleString('es-AR')}`} />
+          <PaymentLine label={isGift ? 'Precio del regalo' : 'Precio por entrada'} value={`$${ticketPrice.toLocaleString('es-AR')}`} />
+          <PaymentLine
+            label={isGift ? `${cart.ticketCount}x Regalo` : `${cart.ticketCount}x Entrada General`}
+            value={`$${subtotal.toLocaleString('es-AR')}`}
+          />
           {discount > 0 ? (
             <PaymentLine label="Descuento MIPRIMERACOMPRA (15%)" value={`-$${discount.toLocaleString('es-AR')}`} accent />
           ) : null}

@@ -62,6 +62,11 @@ export const styles = StyleSheet.create({
     paddingBottom: 150,
     gap: 16,
   },
+  contentWithNavAndFooter: {
+    padding: 18,
+    paddingBottom: 240,
+    gap: 16,
+  },
   centerContent: {
     padding: 18,
     paddingBottom: 80,
@@ -316,6 +321,9 @@ export const styles = StyleSheet.create({
     borderTopColor: 'rgba(114, 120, 126, 0.18)',
     padding: 16,
     gap: 10,
+  },
+  footerBarWithNav: {
+    bottom: 74,
   },
   bottomNav: {
     position: 'absolute',

@@ -10,6 +10,7 @@ const statusLabels: Record<UserExperienceStatus, string> = {
   upcoming: 'Próxima',
   revealed: 'Revelada',
   feedback: 'Feedback',
+  finished: 'Finalizada',
 };
 
 export default function ProximasExperiencias({ onNavigate, experiences, onSelectExperience }: ExperiencesScreenProps) {
@@ -27,7 +28,11 @@ export default function ProximasExperiencias({ onNavigate, experiences, onSelect
         <Text style={styles.subtitle}>Tocá una actividad para ver qué corresponde hacer ahora.</Text>
 
         {experiences.map((experience) => (
-          <Pressable key={experience.id} onPress={() => onSelectExperience(experience)}>
+          <Pressable
+            key={experience.id}
+            disabled={experience.status === 'finished'}
+            onPress={() => onSelectExperience(experience)}
+          >
             <Card>
               <ImageBackground source={{ uri: experience.image }} style={styles.countdownHero} imageStyle={styles.heroImage}>
                 <View style={styles.imageOverlay} />
@@ -41,6 +46,9 @@ export default function ProximasExperiencias({ onNavigate, experiences, onSelect
                 <Text style={styles.link}>{experience.revealLabel}</Text>
               </View>
               <Text style={styles.cardText}>{experience.description}</Text>
+              {experience.status === 'finished' ? (
+                <Text style={styles.successText}>Feedback enviado. Esta experiencia ya quedó finalizada.</Text>
+              ) : null}
             </Card>
           </Pressable>
         ))}

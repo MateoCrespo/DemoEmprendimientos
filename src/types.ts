@@ -10,6 +10,7 @@ export enum Screen {
   REVELACION = 'REVELACION',
   ENCUESTA = 'ENCUESTA',
   REGALAR = 'REGALAR',
+  CONFIGURAR_REGALO = 'CONFIGURAR_REGALO',
   PERFIL = 'PERFIL',
   EDITAR_PERFIL = 'EDITAR_PERFIL'
 }
@@ -45,7 +46,7 @@ export interface GiftConfig {
   message: string;
 }
 
-export type UserExperienceStatus = 'upcoming' | 'revealed' | 'feedback';
+export type UserExperienceStatus = 'upcoming' | 'revealed' | 'feedback' | 'finished';
 
 export interface UserExperience {
   id: string;

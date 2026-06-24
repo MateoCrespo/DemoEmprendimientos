@@ -32,7 +32,7 @@ export default function ConfigurarExperiencia({
   const activeBudgetThumb = useRef<'from' | 'to' | null>(null);
 
   const minBudget = 0;
-  const maxBudget = 500000;
+  const maxBudget = 150000;
   const minBudgetRange = 10000;
   const budgetStep = 500;
   const monthNames = [

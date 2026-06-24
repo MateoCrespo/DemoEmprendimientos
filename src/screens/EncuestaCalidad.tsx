@@ -8,7 +8,7 @@ import { SelectedExperienceScreenProps } from '../navigation';
 import { Screen } from '../types';
 import { styles } from '../theme/styles';
 
-export default function EncuestaCalidad({ onNavigate, experience }: SelectedExperienceScreenProps) {
+export default function EncuestaCalidad({ onNavigate, experience, onFinishFeedback }: SelectedExperienceScreenProps) {
   const [rating, setRating] = useState(0);
   const [ambient, setAmbient] = useState('');
   const [match, setMatch] = useState('');
@@ -78,7 +78,18 @@ export default function EncuestaCalidad({ onNavigate, experience }: SelectedExpe
           style={[styles.input, styles.textArea]}
         />
         <TextInput placeholder="Tip directo para el anfitrión" value={tip} onChangeText={setTip} style={styles.input} />
-        <PrimaryButton onPress={() => onNavigate(Screen.INICIO, 'none')}>Enviar Feedback</PrimaryButton>
+        <PrimaryButton
+          onPress={() => {
+            if (experience && onFinishFeedback) {
+              onFinishFeedback(experience.id);
+              return;
+            }
+
+            onNavigate(Screen.INICIO, 'none');
+          }}
+        >
+          Enviar Feedback
+        </PrimaryButton>
       </ScrollView>
     </AppShell>
   );
