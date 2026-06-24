@@ -15,21 +15,13 @@ Prototipo mobile de PlanGo hecho con Expo y React Native.
    npm install
    ```
 
-2. Arrancar Expo:
+2. Arrancar el programa:
 
    ```bash
-   npm start
+   npm run start
    ```
 
-3. Escanear el QR con Expo Go.
-
-También podés usar:
-
-```bash
-npm run android
-npm run ios
-npm run web
-```
+3. Se puede escanear el QR con Expo Go o mas facil abrir desde el navegador con el link de localhost que te da. Si lo abris desde el navegador es recomenable ponerlo en tamaño celular, ya que de esa forma lo vamos a ver no
 
 ## Notas
 
