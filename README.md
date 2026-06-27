@@ -23,6 +23,10 @@ Prototipo mobile de PlanGo hecho con Expo y React Native.
 
 3. Se puede escanear el QR con Expo Go o mas facil abrir desde el navegador con el link de localhost que te da. Si lo abris desde el navegador es recomenable ponerlo en tamaño celular, ya que de esa forma lo vamos a ver no
 
+4. Ya existe un usario creado con credenciales:
+   - Usuario: cliente1@gmail.com
+   - Contraseña: cliente123
+
 ## Notas
 
 - `src/App.tsx` decide qué pantalla se muestra.

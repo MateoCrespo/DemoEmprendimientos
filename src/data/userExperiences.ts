@@ -49,7 +49,7 @@ export const initialUserExperiences: UserExperience[] = [
     activityType: 'Música en vivo',
     status: 'feedback',
     revealLabel: 'Pendiente de feedback',
-    destinationTitle: 'Jazz íntimo y coctelería',
+    destinationTitle: 'Jazz y coctelería',
     destinationImage: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=800',
     destinationLocation: 'Cerro de las Rosas, Córdoba',
     exactAddress: 'Luis de Tejeda 4560, Cerro de las Rosas, Córdoba',
